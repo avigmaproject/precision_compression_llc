@@ -1,0 +1,5 @@
+#import <Foundation/Foundation.h>
+@interface PodsDummy_Pods_Precision_Compression_LLC_Precision_Compression_LLCTests : NSObject
+@end
+@implementation PodsDummy_Pods_Precision_Compression_LLC_Precision_Compression_LLCTests
+@end

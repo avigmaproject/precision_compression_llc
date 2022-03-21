@@ -1,0 +1,6 @@
+module Pods_Precision_Compression_LLC {
+  umbrella header "Pods-Precision_Compression_LLC-umbrella.h"
+
+  export *
+  module * { export * }
+}

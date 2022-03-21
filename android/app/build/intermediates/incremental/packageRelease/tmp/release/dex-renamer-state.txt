@@ -1,0 +1,4 @@
+#Thu Mar 17 11:57:58 IST 2022
+base.0=/Users/avigma/Precision_Compression_LLC/android/app/build/intermediates/dex/release/mergeDexRelease/classes.dex
+renamed.0=classes.dex
+path.0=classes.dex

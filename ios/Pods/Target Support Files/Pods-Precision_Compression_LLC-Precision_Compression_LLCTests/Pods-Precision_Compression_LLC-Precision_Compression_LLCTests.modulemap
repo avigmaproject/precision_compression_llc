@@ -1,0 +1,6 @@
+module Pods_Precision_Compression_LLC_Precision_Compression_LLCTests {
+  umbrella header "Pods-Precision_Compression_LLC-Precision_Compression_LLCTests-umbrella.h"
+
+  export *
+  module * { export * }
+}
