@@ -5,73 +5,76 @@ import {
   Image,
   TouchableOpacity,
   SafeAreaView,
-} from "react-native";
-import React, { useState, useEffect } from "react";
-import DropDownPicker from "react-native-dropdown-picker";
-import Icon from "react-native-vector-icons/AntDesign";
-import * as database from "../RealmDataBase/allSchemas";
-import RNFetchBlob from "rn-fetch-blob";
+  StatusBar,
+  Linking,
+  Platform,
+  ActivityIndicator
+} from 'react-native'
+import React, { useState, useEffect } from 'react'
+import DropDownPicker from 'react-native-dropdown-picker'
+import Icon from 'react-native-vector-icons/AntDesign'
+import * as database from '../RealmDataBase/allSchemas'
+import RNFetchBlob from 'rn-fetch-blob'
 
 const UnitPage_1 = ({ navigation, ...props }) => {
-  const [opensuction, setOpensuction] = useState(false);
-  const [opendischarge, setOpendischarge] = useState(false);
-  const [open, setOpen] = useState(false);
-
-  const [valuesuction, setValuesuction] = useState(null);
-  const [valuedischarge, setValuedischarge] = useState(null);
-  const [value, setValue] = useState(null);
+  const [opensuction, setOpensuction] = useState(false)
+  const [opendischarge, setOpendischarge] = useState(false)
+  const [isLoading, setisLoading] = useState(true)
+  const [valuesuction, setValuesuction] = useState(null)
+  const [valuedischarge, setValuedischarge] = useState(null)
+  const [value, setValue] = useState('Flow rate')
 
   const [suction, setsuction] = useState([
-    { label: "20", value: 20 },
-    { label: "25", value: 25 },
-    { label: "30", value: 30 },
-    { label: "35", value: 35 },
-    { label: "40", value: 40 },
-    { label: "45", value: 45 },
-    { label: "50", value: 50 },
-    { label: "55", value: 55 },
-    { label: "60", value: 60 },
-  ]);
+    { label: '20', value: 20 },
+    { label: '25', value: 25 },
+    { label: '30', value: 30 },
+    { label: '35', value: 35 },
+    { label: '40', value: 40 },
+    { label: '45', value: 45 },
+    { label: '50', value: 50 },
+    { label: '55', value: 55 },
+    { label: '60', value: 60 }
+  ])
   const [discharge, setdischarge] = useState([
-    { label: "100", value: 100 },
-    { label: "125", value: 125 },
-    { label: "150", value: 150 },
-    { label: "250", value: 250 },
-    { label: "300", value: 300 },
-    { label: "350", value: 350 },
-    { label: "400", value: 400 },
-    { label: "425", value: 450 },
-  ]);
+    { label: '100', value: 100 },
+    { label: '125', value: 125 },
+    { label: '150', value: 150 },
+    { label: '250', value: 250 },
+    { label: '300', value: 300 },
+    { label: '350', value: 350 },
+    { label: '400', value: 400 },
+    { label: '425', value: 450 }
+  ])
   const [discharge20, setdischarge20] = useState([
-    { label: "100", value: 100 },
-    { label: "125", value: 125 },
-    { label: "150", value: 150 },
-    { label: "250", value: 250 },
-    { label: "300", value: 300 },
-    { label: "350", value: 350 },
-    { label: "400", value: 400 },
-    { label: "425", value: 425 },
-  ]);
+    { label: '100', value: 100 },
+    { label: '125', value: 125 },
+    { label: '150', value: 150 },
+    { label: '250', value: 250 },
+    { label: '300', value: 300 },
+    { label: '350', value: 350 },
+    { label: '400', value: 400 },
+    { label: '425', value: 425 }
+  ])
   const [discharge30, setdischarge30] = useState([
-    { label: "100", value: 100 },
-    { label: "150", value: 150 },
-    { label: "175", value: 175 },
-    { label: "250", value: 250 },
-    { label: "300", value: 300 },
-    { label: "350", value: 350 },
-    { label: "400", value: 400 },
-    { label: "425", value: 425 },
-  ]);
+    { label: '100', value: 100 },
+    { label: '150', value: 150 },
+    { label: '175', value: 175 },
+    { label: '250', value: 250 },
+    { label: '300', value: 300 },
+    { label: '350', value: 350 },
+    { label: '400', value: 400 },
+    { label: '425', value: 425 }
+  ])
   const [discharge40, setdischarge40] = useState([
-    { label: "100", value: 100 },
-    { label: "150", value: 150 },
-    { label: "200", value: 200 },
-    { label: "250", value: 250 },
-    { label: "300", value: 300 },
-    { label: "350", value: 350 },
-    { label: "400", value: 400 },
-    { label: "425", value: 425 },
-  ]);
+    { label: '100', value: 100 },
+    { label: '150', value: 150 },
+    { label: '200', value: 200 },
+    { label: '250', value: 250 },
+    { label: '300', value: 300 },
+    { label: '350', value: 350 },
+    { label: '400', value: 400 },
+    { label: '425', value: 425 }
+  ])
 
   const [CompressionData, setCompressionData] = useState([
     // { suction: 20, discharge: 100, FLOW_RATE_MCF: "281" },
@@ -176,203 +179,284 @@ const UnitPage_1 = ({ navigation, ...props }) => {
     // { suction: 60, discharge: 550, FLOW_RATE_MCF: "N/A" },
     // { suction: 60, discharge: 585, FLOW_RATE_MCF: "N/A" },
 
-    { suction: 20, discharge: 100, FLOW_RATE_MCF: "281" },
-    { suction: 20, discharge: 125, FLOW_RATE_MCF: "258" },
-    { suction: 20, discharge: 150, FLOW_RATE_MCF: "N/A" },
-    { suction: 20, discharge: 250, FLOW_RATE_MCF: "N/A" },
-    { suction: 20, discharge: 300, FLOW_RATE_MCF: "N/A" },
-    { suction: 20, discharge: 350, FLOW_RATE_MCF: "N/A" },
-    { suction: 20, discharge: 400, FLOW_RATE_MCF: "N/A" },
-    { suction: 20, discharge: 425, FLOW_RATE_MCF: "N/A" },
+    { suction: 20, discharge: 100, FLOW_RATE_MCF: '281' },
+    { suction: 20, discharge: 125, FLOW_RATE_MCF: '258' },
+    { suction: 20, discharge: 150, FLOW_RATE_MCF: 'N/A' },
+    { suction: 20, discharge: 250, FLOW_RATE_MCF: 'N/A' },
+    { suction: 20, discharge: 300, FLOW_RATE_MCF: 'N/A' },
+    { suction: 20, discharge: 350, FLOW_RATE_MCF: 'N/A' },
+    { suction: 20, discharge: 400, FLOW_RATE_MCF: 'N/A' },
+    { suction: 20, discharge: 425, FLOW_RATE_MCF: 'N/A' },
 
-    { suction: 25, discharge: 100, FLOW_RATE_MCF: "336" },
-    { suction: 25, discharge: 125, FLOW_RATE_MCF: "313" },
-    { suction: 25, discharge: 150, FLOW_RATE_MCF: "291" },
-    { suction: 25, discharge: 250, FLOW_RATE_MCF: "N/A" },
-    { suction: 25, discharge: 300, FLOW_RATE_MCF: "N/A" },
-    { suction: 25, discharge: 350, FLOW_RATE_MCF: "N/A" },
-    { suction: 25, discharge: 400, FLOW_RATE_MCF: "N/A" },
-    { suction: 25, discharge: 425, FLOW_RATE_MCF: "N/A" },
+    { suction: 25, discharge: 100, FLOW_RATE_MCF: '336' },
+    { suction: 25, discharge: 125, FLOW_RATE_MCF: '313' },
+    { suction: 25, discharge: 150, FLOW_RATE_MCF: '291' },
+    { suction: 25, discharge: 250, FLOW_RATE_MCF: 'N/A' },
+    { suction: 25, discharge: 300, FLOW_RATE_MCF: 'N/A' },
+    { suction: 25, discharge: 350, FLOW_RATE_MCF: 'N/A' },
+    { suction: 25, discharge: 400, FLOW_RATE_MCF: 'N/A' },
+    { suction: 25, discharge: 425, FLOW_RATE_MCF: 'N/A' },
 
-    { suction: 30, discharge: 100, FLOW_RATE_MCF: "391" },
-    { suction: 30, discharge: 150, FLOW_RATE_MCF: "345" },
-    { suction: 30, discharge: 175, FLOW_RATE_MCF: "323" },
-    { suction: 30, discharge: 250, FLOW_RATE_MCF: "N/A" },
-    { suction: 30, discharge: 300, FLOW_RATE_MCF: "N/A" },
-    { suction: 30, discharge: 350, FLOW_RATE_MCF: "N/A" },
-    { suction: 30, discharge: 400, FLOW_RATE_MCF: "N/A" },
-    { suction: 30, discharge: 425, FLOW_RATE_MCF: "N/A" },
+    { suction: 30, discharge: 100, FLOW_RATE_MCF: '391' },
+    { suction: 30, discharge: 150, FLOW_RATE_MCF: '345' },
+    { suction: 30, discharge: 175, FLOW_RATE_MCF: '323' },
+    { suction: 30, discharge: 250, FLOW_RATE_MCF: 'N/A' },
+    { suction: 30, discharge: 300, FLOW_RATE_MCF: 'N/A' },
+    { suction: 30, discharge: 350, FLOW_RATE_MCF: 'N/A' },
+    { suction: 30, discharge: 400, FLOW_RATE_MCF: 'N/A' },
+    { suction: 30, discharge: 425, FLOW_RATE_MCF: 'N/A' },
 
-    { suction: 35, discharge: 100, FLOW_RATE_MCF: "447" },
-    { suction: 35, discharge: 150, FLOW_RATE_MCF: "400" },
-    { suction: 35, discharge: 175, FLOW_RATE_MCF: "377" },
-    { suction: 35, discharge: 250, FLOW_RATE_MCF: "N/A" },
-    { suction: 35, discharge: 300, FLOW_RATE_MCF: "N/A" },
-    { suction: 35, discharge: 350, FLOW_RATE_MCF: "N/A" },
-    { suction: 35, discharge: 400, FLOW_RATE_MCF: "N/A" },
-    { suction: 35, discharge: 425, FLOW_RATE_MCF: "N/A" },
+    { suction: 35, discharge: 100, FLOW_RATE_MCF: '447' },
+    { suction: 35, discharge: 150, FLOW_RATE_MCF: '400' },
+    { suction: 35, discharge: 175, FLOW_RATE_MCF: '377' },
+    { suction: 35, discharge: 250, FLOW_RATE_MCF: 'N/A' },
+    { suction: 35, discharge: 300, FLOW_RATE_MCF: 'N/A' },
+    { suction: 35, discharge: 350, FLOW_RATE_MCF: 'N/A' },
+    { suction: 35, discharge: 400, FLOW_RATE_MCF: 'N/A' },
+    { suction: 35, discharge: 425, FLOW_RATE_MCF: 'N/A' },
 
-    { suction: 40, discharge: 100, FLOW_RATE_MCF: "503" },
-    { suction: 40, discharge: 150, FLOW_RATE_MCF: "455" },
-    { suction: 40, discharge: 200, FLOW_RATE_MCF: "409" },
-    { suction: 40, discharge: 250, FLOW_RATE_MCF: "N/A" },
-    { suction: 40, discharge: 300, FLOW_RATE_MCF: "N/A" },
-    { suction: 40, discharge: 350, FLOW_RATE_MCF: "N/A" },
-    { suction: 40, discharge: 400, FLOW_RATE_MCF: "N/A" },
-    { suction: 40, discharge: 425, FLOW_RATE_MCF: "N/A" },
+    { suction: 40, discharge: 100, FLOW_RATE_MCF: '503' },
+    { suction: 40, discharge: 150, FLOW_RATE_MCF: '455' },
+    { suction: 40, discharge: 200, FLOW_RATE_MCF: '409' },
+    { suction: 40, discharge: 250, FLOW_RATE_MCF: 'N/A' },
+    { suction: 40, discharge: 300, FLOW_RATE_MCF: 'N/A' },
+    { suction: 40, discharge: 350, FLOW_RATE_MCF: 'N/A' },
+    { suction: 40, discharge: 400, FLOW_RATE_MCF: 'N/A' },
+    { suction: 40, discharge: 425, FLOW_RATE_MCF: 'N/A' },
 
-    { suction: 45, discharge: 100, FLOW_RATE_MCF: "560" },
-    { suction: 45, discharge: 150, FLOW_RATE_MCF: "510" },
-    { suction: 45, discharge: 200, FLOW_RATE_MCF: "464" },
-    { suction: 45, discharge: 250, FLOW_RATE_MCF: "N/A" },
-    { suction: 45, discharge: 300, FLOW_RATE_MCF: "N/A" },
-    { suction: 45, discharge: 350, FLOW_RATE_MCF: "N/A" },
-    { suction: 45, discharge: 400, FLOW_RATE_MCF: "N/A" },
-    { suction: 45, discharge: 425, FLOW_RATE_MCF: "N/A" },
+    { suction: 45, discharge: 100, FLOW_RATE_MCF: '560' },
+    { suction: 45, discharge: 150, FLOW_RATE_MCF: '510' },
+    { suction: 45, discharge: 200, FLOW_RATE_MCF: '464' },
+    { suction: 45, discharge: 250, FLOW_RATE_MCF: 'N/A' },
+    { suction: 45, discharge: 300, FLOW_RATE_MCF: 'N/A' },
+    { suction: 45, discharge: 350, FLOW_RATE_MCF: 'N/A' },
+    { suction: 45, discharge: 400, FLOW_RATE_MCF: 'N/A' },
+    { suction: 45, discharge: 425, FLOW_RATE_MCF: 'N/A' },
 
-    { suction: 50, discharge: 100, FLOW_RATE_MCF: "616" },
-    { suction: 50, discharge: 150, FLOW_RATE_MCF: "566" },
-    { suction: 50, discharge: 200, FLOW_RATE_MCF: "440" },
-    { suction: 50, discharge: 250, FLOW_RATE_MCF: "358" },
-    { suction: 50, discharge: 300, FLOW_RATE_MCF: "N/A" },
-    { suction: 50, discharge: 350, FLOW_RATE_MCF: "N/A" },
-    { suction: 50, discharge: 400, FLOW_RATE_MCF: "N/A" },
-    { suction: 50, discharge: 425, FLOW_RATE_MCF: "N/A" },
+    { suction: 50, discharge: 100, FLOW_RATE_MCF: '616' },
+    { suction: 50, discharge: 150, FLOW_RATE_MCF: '566' },
+    { suction: 50, discharge: 200, FLOW_RATE_MCF: '440' },
+    { suction: 50, discharge: 250, FLOW_RATE_MCF: '358' },
+    { suction: 50, discharge: 300, FLOW_RATE_MCF: 'N/A' },
+    { suction: 50, discharge: 350, FLOW_RATE_MCF: 'N/A' },
+    { suction: 50, discharge: 400, FLOW_RATE_MCF: 'N/A' },
+    { suction: 50, discharge: 425, FLOW_RATE_MCF: 'N/A' },
 
-    { suction: 55, discharge: 100, FLOW_RATE_MCF: "673" },
-    { suction: 55, discharge: 150, FLOW_RATE_MCF: "622" },
-    { suction: 55, discharge: 200, FLOW_RATE_MCF: "539" },
-    { suction: 55, discharge: 250, FLOW_RATE_MCF: "463" },
-    { suction: 55, discharge: 300, FLOW_RATE_MCF: "N/A" },
-    { suction: 55, discharge: 350, FLOW_RATE_MCF: "N/A" },
-    { suction: 55, discharge: 400, FLOW_RATE_MCF: "N/A" },
-    { suction: 55, discharge: 425, FLOW_RATE_MCF: "N/A" },
+    { suction: 55, discharge: 100, FLOW_RATE_MCF: '673' },
+    { suction: 55, discharge: 150, FLOW_RATE_MCF: '622' },
+    { suction: 55, discharge: 200, FLOW_RATE_MCF: '539' },
+    { suction: 55, discharge: 250, FLOW_RATE_MCF: '463' },
+    { suction: 55, discharge: 300, FLOW_RATE_MCF: 'N/A' },
+    { suction: 55, discharge: 350, FLOW_RATE_MCF: 'N/A' },
+    { suction: 55, discharge: 400, FLOW_RATE_MCF: 'N/A' },
+    { suction: 55, discharge: 425, FLOW_RATE_MCF: 'N/A' },
 
-    { suction: 60, discharge: 100, FLOW_RATE_MCF: "731" },
-    { suction: 60, discharge: 150, FLOW_RATE_MCF: "679" },
-    { suction: 60, discharge: 200, FLOW_RATE_MCF: "591" },
-    { suction: 60, discharge: 250, FLOW_RATE_MCF: "476" },
-    { suction: 60, discharge: 300, FLOW_RATE_MCF: "406" },
-    { suction: 60, discharge: 350, FLOW_RATE_MCF: "N/A" },
-    { suction: 60, discharge: 400, FLOW_RATE_MCF: "N/A" },
-    { suction: 60, discharge: 425, FLOW_RATE_MCF: "N/A" },
-  ]);
+    { suction: 60, discharge: 100, FLOW_RATE_MCF: '731' },
+    { suction: 60, discharge: 150, FLOW_RATE_MCF: '679' },
+    { suction: 60, discharge: 200, FLOW_RATE_MCF: '591' },
+    { suction: 60, discharge: 250, FLOW_RATE_MCF: '476' },
+    { suction: 60, discharge: 300, FLOW_RATE_MCF: '406' },
+    { suction: 60, discharge: 350, FLOW_RATE_MCF: 'N/A' },
+    { suction: 60, discharge: 400, FLOW_RATE_MCF: 'N/A' },
+    { suction: 60, discharge: 425, FLOW_RATE_MCF: 'N/A' }
+  ])
 
   useEffect(() => {
-    Savedata();
+    Savedata()
     return () => {
-      console.log("close");
-    };
-  }, []);
+      console.log('close')
+    }
+  }, [])
+
   const Savedata = () => {
+    setisLoading(false)
     database
       .DeleteDataMaster()
       .then(() => {})
       .catch((error) => {
-        alert("Unable to add Product.Try again");
-        console.log("insert", error);
-      });
-    var data;
+        alert('Unable to add Product.Try again')
+        console.log('insert', error)
+      })
+    var data
 
     for (let j = 0; j < CompressionData.length; j++) {
       data = {
         PC_PkeyID: j,
         SUCTION_PSI: CompressionData[j].suction,
         DISCHARGE_PS: CompressionData[j].discharge,
-        FLOW_RATE_MCF: CompressionData[j].FLOW_RATE_MCF,
-      };
+        FLOW_RATE_MCF: CompressionData[j].FLOW_RATE_MCF
+      }
 
       database
         .InsertDataMaster(data)
-        .then(() => {})
+        .then(() => {
+          setisLoading(true)
+        })
         .catch((error) => {
-          alert("Unable to add Product.Try again");
-          console.log("insert", error);
-        });
+          alert('Unable to add Product.Try again')
+          console.log('insert', error)
+        })
     }
-    Display();
-    console.log("minal", data);
-  };
+    Display()
+    console.log('minal1231231', data)
+  }
   const Display = () => {
     database
       .queryAllDataMaster()
       .then((res) => {
-        console.log(res);
+        console.log(res)
       })
       .catch((error) => {
-        alert("Unable to add Product.Try again");
-        console.log("insert", error);
-      });
-  };
+        // setValue("Error");
+
+        // alert("Unable to add Product.Try again");
+        console.log('select1', error)
+      })
+  }
+
   const Result = (valuedischarge1) => {
+    console.log('valuedischarge1', valuedischarge1)
     database
-      .querySelectedDataMaster(valuedischarge1, valuesuction)
+      .querySelectedDataMaster(valuedischarge1.value, valuesuction)
       .then((res) => {
-        console.log("querySelectedDataMaster", res[0][0].FLOW_RATE_MCF);
-        setValue(res[0][0].FLOW_RATE_MCF);
+        console.log('setValue', res[0][0].FLOW_RATE_MCF)
+        setValue(res[0][0].FLOW_RATE_MCF)
       })
       .catch((error) => {
-        alert("Unable to add Product.Try again");
-        console.log("insert", error);
-      });
-  };
+        setValue('Error')
+        // alert("Unable to add Product.Try again");
+        console.log('select', error)
+      })
+  }
+  const Result1 = (valuesuction) => {
+    console.log('valuesuction', valuedischarge, valuesuction.value)
+    database
+      .querySelectedDataMaster(valuedischarge, valuesuction.value)
+      .then((res) => {
+        console.log('querySelectedDataMaster', res)
+        setValue(res[0][0].FLOW_RATE_MCF)
+      })
+      .catch((error) => {
+        setValue('Error')
+
+        // alert("Unable to add Product.Try again");
+        console.log('insert2', error)
+      })
+  }
   const DischargeValue = (item) => {
-    console.log(item);
+    console.log(item)
     if (item.value === 20) {
-      setdischarge(discharge20);
+      setdischarge(discharge20)
     } else if (item.value === 25) {
-      setdischarge(discharge20);
+      setdischarge(discharge20)
     } else if (item.value === 30) {
       // alert(item.value);
-      setdischarge(discharge30);
+      setdischarge(discharge30)
     } else if (item.value === 35) {
       // alert(item.value);
-      setdischarge(discharge30);
-      console.log("discharge", discharge30);
+      setdischarge(discharge30)
+      console.log('discharge', discharge30)
     } else {
-      // alert(item.value);
-      setdischarge(discharge40);
+      setdischarge(discharge40)
     }
-    console.log("minal", discharge);
-  };
+    // console.log("minaldischarge", discharge);
+  }
+  const SelectitemSunction = (item) => {
+    DischargeValue(item)
+    Result1(item)
+  }
+  const downloadFile = () => {
+    setisLoading(false)
+    let FilePath =
+      'https://www.precisioncompression.com/images/brochures/Precision_Compression_Brochure_20_w.pdf'
+    const { dirs } = RNFetchBlob.fs
+    if (Platform.OS === 'android') {
+      RNFetchBlob.config({
+        fileCache: true,
+        addAndroidDownloads: {
+          useDownloadManager: true,
+          notification: true,
+          path: `${dirs.DownloadDir}/test.pdf`,
+          description: 'Downloading..'
+        }
+      })
+        .fetch('GET', FilePath, {})
+        .then((res) => {
+          console.log('The file saved to ', res.data)
+          setisLoading(true)
+        })
+        .catch((e) => {
+          console.log(e)
+        })
+    } else {
+      const configfb = {
+        fileCache: true,
+        useDownloadManager: true,
+        notification: true,
+        mediaScannable: true,
+        path: `${dirs.DocumentDir}/${FilePath}.pdf`
+      }
+      const configOptions = Platform.select({
+        ios: {
+          fileCache: configfb.fileCache,
+          path: configfb.path
+        }
+      })
+      RNFetchBlob.config(configOptions)
+        .fetch('GET', FilePath, {})
+        .then((res) => {
+          setisLoading(true)
+
+          RNFetchBlob.ios.openDocument(res.data)
+        })
+        .catch((e) => {
+          console.log('The file saved to ERROR', e.message)
+        })
+    }
+    setisLoading(true)
+  }
+
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "#000000" }}>
-      <View
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#000000' }}>
+      <StatusBar backgroundColor='#000' barStyle='light-content' />
+
+      <TouchableOpacity
+        onPress={() => Linking.openURL('https://www.precisioncompression.com/')}
         style={{
-          alignItems: "center",
-          justifyContent: "center",
-          flex: 1 / 9,
+          alignItems: 'center',
+          justifyContent: 'center',
+          flex: 1 / 9
           // backgroundColor: "pink",
         }}
       >
         <Image
-          source={require("../Assets/Logo.png")}
-          resizeMode="contain"
-          style={{ width: "100%", height: "100%" }}
+          source={require('../Assets/Logo.png')}
+          resizeMode='contain'
+          style={{ width: '100%', height: '100%' }}
         />
-      </View>
+      </TouchableOpacity>
       <TouchableOpacity
-        style={{ position: "absolute", left: 20, top: "20%", zIndex: 111 }}
+        style={{ position: 'absolute', left: 20, top: '20%', zIndex: 111 }}
         onPress={() => navigation.goBack()}
       >
-        <Icon name="left" color="#FFFFFF" size={30} />
+        <Icon name='left' color='#FFFFFF' size={30} />
       </TouchableOpacity>
       <View
         style={{
-          alignItems: "center",
-          flex: 1 / 2,
+          alignItems: 'center',
+          flex: 1 / 2
         }}
       >
-        <View style={{ marginTop: 10, position: "absolute" }}>
+        <View style={{ marginTop: 10, position: 'absolute' }}>
           <Text style={styles.text}>PC 50-1</Text>
         </View>
 
         <Image
-          resizeMode="stretch"
-          source={require("../Assets/PC_50-1.png")}
-          style={{ width: "100%", height: "80%" }}
+          resizeMode='stretch'
+          source={require('../Assets/PC_50-1.png')}
+          style={{ width: '100%', height: '80%' }}
         />
-        <View style={{ width: "80%" }}>
+        <View style={{ width: '80%' }}>
           <Text style={styles.text}>
             Precision Compression PC50-1 Single Stage Unit Flow Rate
             Calculations
@@ -381,14 +465,14 @@ const UnitPage_1 = ({ navigation, ...props }) => {
       </View>
       <View
         style={{
-          flexDirection: "row",
+          flexDirection: 'row',
           flex: 1 / 3,
           // backgroundColor: "pink",
-          justifyContent: "center",
-          alignItems: "center",
+          justifyContent: 'center',
+          alignItems: 'center'
         }}
       >
-        <View style={{ width: "50%" }}>
+        <View style={{ width: '50%' }}>
           <View style={styles.viewstyle}>
             <Text style={styles.title}>SUCTION PSI</Text>
             <DropDownPicker
@@ -402,18 +486,18 @@ const UnitPage_1 = ({ navigation, ...props }) => {
               setValue={setValuesuction}
               setItems={setsuction}
               style={styles.dropdown}
-              dropDownDirection="TOP"
+              dropDownDirection='TOP'
               onSelectItem={(item) => {
-                DischargeValue(item);
+                SelectitemSunction(item)
               }}
               arrowIconStyle={{
-                backgroundColor: "#fff",
+                backgroundColor: '#fff'
               }}
-              placeholder="Select an item"
+              placeholder='Select an item'
               placeholderStyle={{
-                color: "#fff",
-                fontWeight: "bold",
-                fontSize: 10,
+                color: '#fff',
+                fontWeight: 'bold',
+                fontSize: 10
               }}
             />
           </View>
@@ -430,18 +514,18 @@ const UnitPage_1 = ({ navigation, ...props }) => {
               setValue={setValuedischarge}
               setItems={setdischarge}
               style={styles.dropdown}
-              dropDownDirection="TOP"
+              dropDownDirection='TOP'
               onSelectItem={(item) => {
-                Result(item);
+                Result(item)
               }}
               arrowIconStyle={{
-                backgroundColor: "#fff",
+                backgroundColor: '#fff'
               }}
-              placeholder="Select an item"
+              placeholder='Select an item'
               placeholderStyle={{
-                color: "#fff",
-                fontWeight: "bold",
-                fontSize: 10,
+                color: '#fff',
+                fontWeight: 'bold',
+                fontSize: 10
               }}
             />
           </View>
@@ -450,9 +534,9 @@ const UnitPage_1 = ({ navigation, ...props }) => {
         <View
           style={{
             // backgroundColor: "green",
-            width: "50%",
-            justifyContent: "center",
-            alignItems: "center",
+            width: '50%',
+            justifyContent: 'center',
+            alignItems: 'center'
           }}
         >
           <View style={styles.viewstyle}>
@@ -460,17 +544,17 @@ const UnitPage_1 = ({ navigation, ...props }) => {
             <View
               style={{
                 ...styles.dropdown,
-                justifyContent: "center",
-                alignItems: "center",
+                justifyContent: 'center',
+                alignItems: 'center'
               }}
             >
               <Text
                 style={{
                   fontSize: 16,
                   lineHeight: 24,
-                  fontWeight: "700",
-                  color: "#fff",
-                  marginVertical: 2,
+                  fontWeight: '700',
+                  color: '#fff',
+                  marginVertical: 2
                 }}
               >
                 {value}
@@ -481,110 +565,114 @@ const UnitPage_1 = ({ navigation, ...props }) => {
       </View>
       <View
         style={{
-          alignItems: "center",
-          flex: 1 / 9,
+          alignItems: 'center',
+          flex: 1 / 9
         }}
       >
-        <TouchableOpacity
-          onPress={() => navigation.navigate("PdfView")}
-          style={styles.button}
-        >
-          <Text style={styles.text1}>DOWNLOAD BROCHURE</Text>
-        </TouchableOpacity>
+        {isLoading ? (
+          <TouchableOpacity
+            onPress={() => downloadFile()}
+            style={styles.button}
+          >
+            <Text style={styles.text1}>DOWNLOAD BROCHURE</Text>
+          </TouchableOpacity>
+        ) : (
+          <Text style={{ fontSize: 20, color: '#fff' }}>Loading....</Text>
+        )}
       </View>
     </SafeAreaView>
-  );
-};
+  )
+}
 
-export default UnitPage_1;
+export default UnitPage_1
 
 const styles = StyleSheet.create({
   text: {
     fontSize: 15,
     lineHeight: 30,
-    fontWeight: "700",
-    color: "red",
-    textAlign: "center",
+    fontWeight: '700',
+    color: 'red',
+    textAlign: 'center'
   },
   desc: {
     fontSize: 12,
     lineHeight: 18,
-    fontWeight: "500",
-    color: "blue",
+    fontWeight: '500',
+    color: 'blue'
   },
   title: {
     fontSize: 12,
     lineHeight: 24,
-    fontWeight: "700",
-    color: "red",
-    marginVertical: 2,
+    fontWeight: '700',
+    color: 'red',
+    marginVertical: 2
   },
   box: {
     borderWidth: 3,
     height: 40,
-    width: "120%",
-    alignItems: "center",
-    justifyContent: "center",
-    borderColor: "#FFFFFF",
+    width: '120%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderColor: '#FFFFFF'
   },
   line: {
     borderBottomWidth: 3,
-    transform: [{ rotate: "-75deg" }],
+    transform: [{ rotate: '-75deg' }],
     width: 110,
-    position: "absolute",
-    bottom: 230,
+    position: 'absolute',
+    bottom: 230
   },
   line2: {
     borderBottomWidth: 3,
-    transform: [{ rotate: "-50deg" }],
+    transform: [{ rotate: '-50deg' }],
     width: 30,
-    position: "absolute",
+    position: 'absolute',
     bottom: 185,
-    left: 45,
+    left: 45
   },
   number: {
-    color: "#FFF",
+    color: '#FFF',
     fontSize: 16,
     lineHeight: 26,
-    fontWeight: "700",
+    fontWeight: '700'
   },
   dropdown: {
     borderWidth: 3,
-    backgroundColor: "#000",
-    borderColor: "#FFFFFF",
+    backgroundColor: '#000',
+    borderColor: '#FFFFFF',
     borderRadius: 0,
-    width: "95%",
-    height: 40,
+    width: '95%',
+    height: 40
   },
   textstyle: {
     fontSize: 15,
-    fontWeight: "bold",
-    color: "#000",
+    fontWeight: 'bold',
+    color: '#000'
   },
   labelstyle: {
-    fontWeight: "bold",
-    color: "#fff",
-    textAlign: "center",
+    fontWeight: 'bold',
+    color: '#fff',
+    textAlign: 'center'
   },
   viewstyle: {
     // backgroundColor: "yellow",
-    width: "80%",
-    alignItems: "center",
-    marginVertical: "5%",
-    marginLeft: 10,
+    width: '80%',
+    alignItems: 'center',
+    marginVertical: '5%',
+    marginLeft: 10
   },
   button: {
-    width: "60%",
+    width: '60%',
     height: 50,
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
     borderRadius: 8,
-    backgroundColor: "red",
+    backgroundColor: 'red'
   },
   text1: {
-    color: "#FFFFFF",
+    color: '#FFFFFF',
     fontSize: 16,
     lineHeight: 26,
-    fontWeight: "700",
-  },
-});
+    fontWeight: '700'
+  }
+})

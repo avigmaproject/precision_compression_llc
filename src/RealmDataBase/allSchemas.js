@@ -122,15 +122,16 @@ export const DeleteData_1Master = () =>
   });
 export const querySelectedDataMaster = (data, data1) =>
   new Promise((resolve, reject) => {
+    console.log(
+      `querySelectedDataMaster,SUCTION_PSI ${data},DISCHARGE_PS ${data1}`
+    );
     Realm.open(databaseOptions)
       .then((realm) => {
         let user = realm
           .objects(Precision_Compression_Schema)
           // `HC_Address CONTAINS[c] "${zipsrting}"`
-          .filtered(
-            `SUCTION_PSI = "${data1}" &&  DISCHARGE_PS= "${data.value}"`
-          );
-        // console.log("single user data", JSON.parse(JSON.stringify(user)));
+          .filtered(`SUCTION_PSI = "${data1}" &&  DISCHARGE_PS= "${data}"`);
+        console.log("single user data", JSON.parse(JSON.stringify(user)));
         resolve([JSON.parse(JSON.stringify(user))]);
       })
       .catch((error) => {
@@ -140,14 +141,12 @@ export const querySelectedDataMaster = (data, data1) =>
   });
 export const querySelectedDataMaster_1 = (data, data1) =>
   new Promise((resolve, reject) => {
-    console.log("minallll131231", data.value, data1);
+    console.log("minallll131231", data, data1);
     Realm.open(databaseOptions)
       .then((realm) => {
         let user = realm
           .objects(Precision_Compression_Schema_1)
-          .filtered(
-            `SUCTION_PSI = "${data1}" &&  DISCHARGE_PS= "${data.value}"`
-          );
+          .filtered(`SUCTION_PSI = "${data1}" &&  DISCHARGE_PS= "${data}"`);
         // console.log("single user data", JSON.parse(JSON.stringify(user)));
         resolve([JSON.parse(JSON.stringify(user))]);
       })
